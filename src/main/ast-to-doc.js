@@ -28,7 +28,7 @@ import printIgnored from "./print-ignored.js";
  * state of the recursion. It is called "path", because it represents
  * the path to the current node through the Abstract Syntax Tree.
  */
-async function printAstToDoc(ast, options) {
+async function printAstToDoc(ast, options, text) {
   ({ ast } = await prepareToPrint(ast, options));
 
   const cache = new Map();
@@ -47,6 +47,7 @@ async function printAstToDoc(ast, options) {
     mainPrint,
     undefined,
     embeds,
+    text,
   );
 
   ensureAllCommentsPrinted(options);
@@ -81,7 +82,14 @@ async function printAstToDoc(ast, options) {
       return cache.get(value);
     }
 
-    const doc = callPluginPrintFunction(path, options, mainPrint, args, embeds);
+    const doc = callPluginPrintFunction(
+      path,
+      options,
+      mainPrint,
+      args,
+      embeds,
+      text,
+    );
 
     if (shouldCache) {
       cache.set(value, doc);
@@ -91,7 +99,7 @@ async function printAstToDoc(ast, options) {
   }
 }
 
-function callPluginPrintFunction(path, options, printPath, args, embeds) {
+function callPluginPrintFunction(path, options, printPath, args, embeds, text) {
   const { node } = path;
   const { printer } = options;
 
@@ -103,7 +111,7 @@ function callPluginPrintFunction(path, options, printPath, args, embeds) {
   } else if (embeds.has(node)) {
     doc = embeds.get(node);
   } else {
-    doc = printer.print(path, options, printPath, args);
+    doc = printer.print(path, options, printPath, args, text);
   }
 
   if (node === options.cursorNode) {

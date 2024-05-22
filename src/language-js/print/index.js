@@ -18,7 +18,7 @@ import { printTypescript } from "./typescript.js";
  * @typedef {import("../../document/builders.js").Doc} Doc
  */
 
-function printWithoutParentheses(path, options, print, args) {
+function printWithoutParentheses(path, options, print, args, text) {
   if (isIgnored(path)) {
     return printIgnored(path, options);
   }
@@ -30,7 +30,7 @@ function printWithoutParentheses(path, options, print, args) {
     printTypescript,
     printEstree,
   ]) {
-    const doc = printer(path, options, print, args);
+    const doc = printer(path, options, print, args, text);
     if (doc !== undefined) {
       return doc;
     }
@@ -58,14 +58,15 @@ const shouldPrintDirectly = createTypeCheckFunction([
  * @param {*} options
  * @param {*} print
  * @param {*} [args]
+ * @param text raw file text
  * @returns {Doc}
  */
-function print(path, options, print, args) {
+function print(path, options, print, args, text = null) {
   if (path.isRoot) {
     options.__onHtmlBindingRoot?.(path.node, options);
   }
 
-  const doc = printWithoutParentheses(path, options, print, args);
+  const doc = printWithoutParentheses(path, options, print, args, text);
   if (!doc) {
     return "";
   }
