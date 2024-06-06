@@ -6,6 +6,12 @@ It does two runs for formatting:
 1. Default prettier without any changes.
 2. Custom check for current node length. If it's less than printWidth - we print the node using basic JSON.stringify with some spaces to keep it readable.
 
+Add .prettierrc.json to the root of your project to configure the width:
+
+{
+  "printWidth": 120
+}
+
 Let me know if you have any ideas or if something doesn't work.
 
 Enjoy!
