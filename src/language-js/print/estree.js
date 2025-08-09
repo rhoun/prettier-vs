@@ -25,7 +25,7 @@ import {
   startsWithNoLookaheadToken,
 } from "../utils/index.js";
 import isBlockComment from "../utils/is-block-comment.js";
-import { customPrint, textLength } from "../vs-customs.js";
+import { customPrint, hasPatternStrings, textLength } from "../vs-customs.js";
 import { printArray } from "./array.js";
 import { printArrowFunction } from "./arrow-function.js";
 import {
@@ -98,8 +98,9 @@ function printEstree(path, options, print, args, text = null) {
     node &&
     text &&
     node?.type !== "ArrayExpression" &&
-    textLength(text, node.start, node.end) <=
-      options.printWidth - (path.ancestors?.length ?? 0)
+    (textLength(text, node.start, node.end) <=
+      options.printWidth - (path.ancestors?.length ?? 0) ||
+      hasPatternStrings(node))
   ) {
     return customPrint(node, text);
   }
